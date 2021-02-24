@@ -1,0 +1,8 @@
+.el-menu-vertical-demo {
+    display: inline-block;
+    text-align: left;
+  &:not(.el-menu--collapse) {
+    width: 240px;
+    min-height: 400px;
+  }
+}
