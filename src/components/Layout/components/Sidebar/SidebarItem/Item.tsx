@@ -1,5 +1,5 @@
 import {defineComponent} from "vue";
-import * as style from "./Item.scss";
+import "./Item.scss";
 
 const menuItem = defineComponent({
     props: {
@@ -12,21 +12,20 @@ const menuItem = defineComponent({
             default: ''
         }
     },
-    render() {
-        const {icon, title} = context.props
-        const vnodes = []
-        if (icon) {
+    setup(props) {
+        const vnodes: JSX.Element[] = []
+        if (props.icon) {
             //if (icon.includes('el-icon')) {
-            vnodes.push(<i class={[icon, style.subElIcon]}/>)
+            vnodes.push(<i class={[props.icon, "sub-el-icon"]}/>)
             /* } else {
                  vnodes.push(<svg-icon icon-class={icon}/>)
              }*/
         }
-        if (title) {
-            vnodes.push(<span slot='title'>{(title)}</span>)
+        if (props.title) {
+            vnodes.push(<span>{(props.title)}</span>)
         }
-        return vnodes
-    }
-});
+       return ()=>(<>{vnodes}</>);
 
+    },
+});
 export default menuItem;
