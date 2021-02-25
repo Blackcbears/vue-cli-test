@@ -55,7 +55,9 @@
     "parserOptions": {
       "ecmaVersion": 2020
     },
-    "rules": {},
+    "rules": {
+      "template-curly-spacing": 1
+    },
     "overrides": [
       {
         "files": [

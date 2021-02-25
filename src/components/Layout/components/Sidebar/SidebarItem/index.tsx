@@ -55,49 +55,52 @@ const sidebarItem = defineComponent({
         basePath: {
             type: String,
             default: ''
+        },
+        className: {
+            type: String,
+            default: 'nest-men'
         }
     },
     setup: function (props) {
-        console.log(props)
         let onlyOneChild = reactive<Item>({
             meta: {activeMenu: "", affix: false, breadcrumb: true, noCache: false},
             name: "",
             path: "",
             hidden: false
         });
-        const {item, isNest, basePath} = props as Readonly<{ item: Item, isNest: boolean, basePath: string }>;
-
+        const {item, isNest,basePath, className } =
+            props as Readonly<{ item: Item, isNest: boolean, basePath: string, className: string }>;
         const hasOneShowingChild = (children: Item[] | undefined, parent: Item) => {
             if (children) {
                 const showingChildren = children.filter(item => {
                     if (props.item.hidden) {
-                        return false
+                        return false;
                     } else {
                         // Temp set(will be used if only has one showing child)
-                        onlyOneChild = item
-                        return true
+                        onlyOneChild = item;
+                        return true;
                     }
-                })
+                });
                 // When there is only one child router, the child router is displayed by default
                 if (showingChildren.length === 1) {
-                    return true
+                    return true;
                 }
                 // Show parent if there are no child router to display
                 if (showingChildren.length === 0) {
-                    onlyOneChild = {...parent, path: '', noShowingChildren: true}
-                    return true
+                    onlyOneChild = {...parent, path: '', noShowingChildren: true};
+                    return true;
                 }
             }
             return false
         };
         const resolvePath = (routePath: string) => {
             if (isExternal(routePath)) {
-                return routePath
+                return routePath;
             }
             if (isExternal(basePath)) {
-                return basePath
+                return basePath;
             }
-            return path.resolve(basePath, routePath)
+            return path.resolve(basePath, routePath);
         }
         /**
          *
@@ -109,7 +112,7 @@ const sidebarItem = defineComponent({
                     is-nest={true}
                     item={child}
                     base-path={resolvePath(child.path)}
-                    className="nest-menu"
+                    class-name="nest-menu"
                 />
             });
 
@@ -118,9 +121,11 @@ const sidebarItem = defineComponent({
         const subMenu: JSX.Element = () => {
             if (hasOneShowingChild(item.children, item) && (!onlyOneChild.children || onlyOneChild.noShowingChildren) && !item.alwaysShow) {
                 if (onlyOneChild.meta) {
-                    return <AppLink to={resolvePath(onlyOneChild.path)}>
+                    return <AppLink to={resolvePath(onlyOneChild.path)} >
                         <el-menu-item
-                            index={resolvePath(onlyOneChild.path)} className={isNest ? '' : 'submenu-title-noDropdown'}>
+                            index={resolvePath(onlyOneChild.path)} class={isNest ? className :
+                            ['submenu-title-noDropdown',]}
+                        >
                             <MenuItem
                                 icon={onlyOneChild.meta.icon || (item.meta && item.meta.icon)}
                                 title={onlyOneChild.meta.title}/>
@@ -128,8 +133,8 @@ const sidebarItem = defineComponent({
                     </AppLink>
                 }
             } else {
-                return <el-submenu ref="subMenu" index={resolvePath(item.path)} popper-append-to-body v-slots={{
-                    title: item.meta ? <MenuItem icon={item.meta && item.meta.icon} title={item.meta.title}/> : ''
+                return <el-submenu class={className} ref="subMenu" index={resolvePath(item.path)} popper-append-to-body={true} v-slots={{
+                    title:()=> item.meta ? <MenuItem icon={item.meta && item.meta.icon} title={item.meta.title}/> : ''
                 }}>
                     {sidebarItemData(item.children as Item[])}
                 </el-submenu>

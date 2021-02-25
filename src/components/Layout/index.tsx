@@ -1,5 +1,5 @@
-import {defineComponent} from "vue";
-import {Sidebar} from "@/components/Layout/components";
+import { defineComponent } from "vue";
+import { Sidebar } from "@/components/Layout/components";
 import "./style.scss"
 
 const layout = defineComponent({
