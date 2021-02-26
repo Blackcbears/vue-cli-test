@@ -56,7 +56,8 @@
       "ecmaVersion": 2020
     },
     "rules": {
-      "template-curly-spacing": 1
+      "template-curly-spacing": 1,
+      "indent": ["error", 2, { "SwitchCase": 1 }]
     },
     "overrides": [
       {
