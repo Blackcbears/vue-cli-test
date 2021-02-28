@@ -4,11 +4,12 @@ import { useStore } from "vuex";
 import SidebarItem from "./SidebarItem";
 import Logo from "./Logo";
 import Item from "./Item";
+import variables from "../../../../style/variables.module.scss";
 
 const sidebar = defineComponent({
   setup() {
     const route = useRoute();
-    const store = useStore()
+    const store = useStore();
     // 活动页
     const activeMenu = computed(() => {
       const { meta, path } = route;
@@ -22,9 +23,8 @@ const sidebar = defineComponent({
     const isCollapse = computed<boolean>(() => {
       return true;
     });
-
-    const showLogo = computed<boolean> ({
-      return store.state.settings.sidebarLogo
+    const showLogo = computed<boolean>(() => {
+      return store.state.setting.sidebarLogo;
     });
 
     const routes: Item[] = [
@@ -212,22 +212,20 @@ const sidebar = defineComponent({
       });
     };
 
-
-
     return () => (
       <>
-        <div class="has-logo">
+        <div class={showLogo.value ? "as-logo" : ""}>
           <Logo collapse={isCollapse.value} />
           <el-scrollbar wrap-class="scrollbar-wrapper">
             <el-menu
               default-active={activeMenu.value}
-              /*collapse="isCollapse"
-                                                                                        background-color="variables.menuBg"
-                                                                                        text-color="variables.menuText"
-                                                                                        unique-opened={false}
-                                                                                        active-text-color="variables.menuActiveText"
-                                                                                        collapse-transition={false}
-                                                                                        mode="vertical"*/
+              collapse={isCollapse.value}
+              background-color={variables.menuBg}
+              text-color={variables.menuText}
+              unique-opened={false}
+              active-text-color={variables.menuActiveText}
+              collapse-transition={false}
+              mode="vertical"
             >
               {SidebarItemData(routes)}
             </el-menu>

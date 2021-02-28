@@ -1,20 +1,32 @@
 import { defineComponent } from "vue";
-import { Sidebar } from "@/components/Layout/components";
-import "./style.scss"
+import { AppMain, Navbar, Settings, Sidebar, TagsView } from "./components";
+import { useStore } from "vuex";
+import "./style.scss";
 
 const layout = defineComponent({
-    setup() {
-        const handleOpen = (key: any, keyPath: any) => {
-            console.log(key, keyPath);
-        };
-        const handleClose = (key: any, keyPath: any) => {
-            console.log(key, keyPath);
-        };
-        return () => (
-            <>
-                <Sidebar/>
-            </>
-        );
-    }
+  setup() {
+    const store = useStore();
+    const handleClickOutside = () => {
+      store.dispatch("app/closeSideBar", { withoutAnimation: false });
+    };
+    return () => (
+      <>
+        <div class="classObj" class="app-wrapper">
+          <div class="drawer-bg" onClick={handleClickOutside} />
+          <Sidebar class="sidebar-container" />
+          <div class="{hasTagsView:needTagsView}" class="main-container">
+            <div class="{'fixed-header':fixedHeader}">
+              <Navbar />
+              <TagsView v-if="needTagsView" />
+            </div>
+            <AppMain />
+            <right-panel v-if="showSettings">
+              <Settings />
+            </right-panel>
+          </div>
+        </div>
+      </>
+    );
+  }
 });
 export default layout;

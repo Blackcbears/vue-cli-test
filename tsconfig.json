@@ -34,9 +34,15 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "tests/**/*.ts",
-    "tests/**/*.tsx"
+    "tests/**/*.tsx",
+    "src/shims-css.d.ts"
   ],
   "exclude": [
     "node_modules"
+  ],
+  "plugins": [
+    {
+      "name": "typescript-plugin-css-modules"
+    }
   ]
 }
