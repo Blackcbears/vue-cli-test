@@ -1,8 +1,10 @@
 import { createStore } from "vuex";
 import modules from "./modules";
+import getters from "./getters";
 
 const store = createStore({
-  modules
+  modules,
+  getters
 });
 
 export default store;

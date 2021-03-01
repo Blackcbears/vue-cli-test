@@ -1,12 +1,19 @@
 import Cookies from "js-cookie";
 import { Commit } from "vuex";
 
+export enum DeviceType {
+  Mobile,
+  Desktop
+}
+
 const state = {
   sidebar: {
-    opened: Cookies.get("sidebarStatus") ? Cookies.get("sidebarStatus") : true,
+    opened: Cookies.get("sidebarStatus")
+      ? Cookies.get("sidebarStatus") === "1"
+      : true,
     withoutAnimation: false
   },
-  device: "desktop",
+  device: DeviceType.Desktop,
   size: Cookies.get("size") || "medium"
 };
 
@@ -30,7 +37,7 @@ const mutations = {
     state.sidebar.opened = false;
     state.sidebar.withoutAnimation = withoutAnimation;
   },
-  TOGGLE_DEVICE: (state: { device: string }, device: string) => {
+  TOGGLE_DEVICE: (state: { device: DeviceType }, device: DeviceType) => {
     state.device = device;
   },
   SET_SIZE: (state: { size: string }, size: string) => {
@@ -49,7 +56,7 @@ const actions = {
   ) {
     commit("CLOSE_SIDEBAR", withoutAnimation);
   },
-  toggleDevice({ commit }: { commit: Commit }, device: string) {
+  toggleDevice({ commit }: { commit: Commit }, device: DeviceType) {
     commit("TOGGLE_DEVICE", device);
   },
   setSize({ commit }: { commit: Commit }, size: string) {

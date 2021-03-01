@@ -11,7 +11,7 @@
         :key="tag.path"
         :class="isActive(tag) ? 'active' : ''"
         :to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }"
-        tag="span"
+
         class="tags-view-item"
         onclick.middle.native="!isAffix(tag) ? closeSelectedTag(tag) : ''"
         oncontextmenu.prevent.native="openMenu(tag, $event)"

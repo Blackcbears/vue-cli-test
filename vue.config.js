@@ -7,7 +7,7 @@ module.exports = {
         // Vue CLI v3 用户可参考 css-loader v1 文档
         // https://github.com/webpack-contrib/css-loader/tree/v1.0.1
         modules: {
-          localIdentName: "[name]-[hash]"
+          localIdentName: "[name]__[hash:5]"
         },
         localsConvention: "camelCaseOnly"
       }

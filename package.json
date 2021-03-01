@@ -11,6 +11,8 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "element-plus": "^1.0.2-beta.32",
+    "fuse.js": "^6.4.6",
+    "screenfull": "^5.1.0",
     "vue": "^3.0.5",
     "vue-router": "^4.0.4",
     "vuex": "^4.0.0-0",
@@ -61,6 +63,7 @@
       "ecmaVersion": 2020
     },
     "rules": {
+      "@typescript-eslint/no-explicit-any": ["off"],
       "template-curly-spacing": 1,
       "indent": [
         "error",

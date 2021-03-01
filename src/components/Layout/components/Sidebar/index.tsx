@@ -21,12 +21,11 @@ const sidebar = defineComponent({
     });
 
     const isCollapse = computed<boolean>(() => {
-      return true;
+      return !store.state.app.sidebar.opened;
     });
     const showLogo = computed<boolean>(() => {
-      return store.state.setting.sidebarLogo;
+      return store.state.settings.sidebarLogo;
     });
-
     const routes: Item[] = [
       {
         alwaysShow: false,
@@ -214,7 +213,7 @@ const sidebar = defineComponent({
 
     return () => (
       <>
-        <div class={showLogo.value ? "as-logo" : ""}>
+        <div class={["sidebar-container", showLogo.value && "has-logo"]}>
           <Logo collapse={isCollapse.value} />
           <el-scrollbar wrap-class="scrollbar-wrapper">
             <el-menu

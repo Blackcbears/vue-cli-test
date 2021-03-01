@@ -1,7 +1,9 @@
-import { defineComponent } from "vue";
+import { defineComponent, computed } from "vue";
 import { AppMain, Navbar, Settings, Sidebar, TagsView } from "./components";
+import RightPanel from "@/components/RightPanel/index.vue";
 import { useStore } from "vuex";
 import "./style.scss";
+import { DeviceType } from "@/store/modules/app";
 
 const layout = defineComponent({
   setup() {
@@ -9,20 +11,51 @@ const layout = defineComponent({
     const handleClickOutside = () => {
       store.dispatch("app/closeSideBar", { withoutAnimation: false });
     };
+
+    const device = computed<DeviceType>(() => {
+      return store.state.app.device;
+    });
+    const sidebar = computed(() => {
+      return store.state.app.sidebar;
+    });
+
+    const showSettings = computed<boolean>(() => {
+      return store.state.settings.showSettings;
+    });
+    const showTagsView = computed<boolean>(() => {
+      return store.state.settings.tagsView;
+    });
+    const fixedHeader = computed<boolean>(() => {
+      return store.state.settings.fixedHeader;
+    });
+
+    const classObj = computed(() => {
+      return {
+        hideSidebar: !sidebar.value.opened,
+        openSidebar: sidebar.value.opened,
+        withoutAnimation: sidebar.value.withoutAnimation,
+        mobile: device.value === DeviceType.Mobile
+      };
+    });
+
     return () => (
       <>
-        <div class="classObj" class="app-wrapper">
-          <div class="drawer-bg" onClick={handleClickOutside} />
+        <div class={[classObj.value, "app-wrapper"]}>
+          {device.value === DeviceType.Mobile && sidebar.value.opened && (
+            <div class="drawer-bg" onClick={handleClickOutside} />
+          )}
           <Sidebar class="sidebar-container" />
-          <div class="{hasTagsView:needTagsView}" class="main-container">
-            <div class="{'fixed-header':fixedHeader}">
+          <div class={[showTagsView.value, "main-container"]}>
+            <div class={fixedHeader.value && "fixed-header"}>
               <Navbar />
-              <TagsView v-if="needTagsView" />
+              {showTagsView.value && <TagsView />}
             </div>
             <AppMain />
-            <right-panel v-if="showSettings">
-              <Settings />
-            </right-panel>
+            {showSettings.value && (
+              <RightPanel>
+                <Settings />
+              </RightPanel>
+            )}
           </div>
         </div>
       </>
