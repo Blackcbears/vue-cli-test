@@ -1,23 +1,43 @@
-import { defineComponent, computed } from "vue";
+import {
+  defineComponent,
+  computed,
+  onBeforeMount,
+  onBeforeUnmount,
+  onMounted
+} from "vue";
 import { AppMain, Navbar, Settings, Sidebar, TagsView } from "./components";
 import RightPanel from "@/components/RightPanel/index.vue";
 import { useStore } from "vuex";
 import "./style.scss";
 import { DeviceType } from "@/store/modules/app";
+import ResizeHandler from "@/components/Layout/mixin/ResizeHandler";
 
 const layout = defineComponent({
   setup() {
+    const {
+      sidebar,
+      device,
+      addEventListenerOnResize,
+      resizeMounted,
+      removeEventListenerResize,
+      watchRouter
+    } = ResizeHandler();
     const store = useStore();
+
+    watchRouter();
+    onBeforeMount(() => {
+      addEventListenerOnResize();
+    });
+    onMounted(() => {
+      resizeMounted();
+    });
+    onBeforeUnmount(() => {
+      removeEventListenerResize();
+    });
+
     const handleClickOutside = () => {
       store.dispatch("app/closeSideBar", { withoutAnimation: false });
     };
-
-    const device = computed<DeviceType>(() => {
-      return store.state.app.device;
-    });
-    const sidebar = computed(() => {
-      return store.state.app.sidebar;
-    });
 
     const showSettings = computed<boolean>(() => {
       return store.state.settings.showSettings;

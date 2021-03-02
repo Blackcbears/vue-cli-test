@@ -1,7 +1,9 @@
 <template>
   <div>
     <svg-icon
-      :icon-class="isFullscreen ? 'el-iconfont-exit-fullscreen' : 'el-iconfont-screen-full'"
+      :icon-class="
+        isFullscreen ? 'el-iconfont-exit-fullscreen' : 'el-iconfont-screen-full'
+      "
       @click="click"
     />
   </div>
@@ -13,7 +15,7 @@ import SvgIcon from "@/components/SvgIcon";
 
 export default {
   name: "Screenfull",
-  components:{
+  components: {
     SvgIcon
   },
   data() {
@@ -42,12 +44,12 @@ export default {
       this.isFullscreen = screenfull.isFullscreen;
     },
     init() {
-      if (screenfull.enabled) {
+      if (screenfull.isEnabled) {
         screenfull.on("change", this.change);
       }
     },
     destroy() {
-      if (screenfull.enabled) {
+      if (screenfull.isEnabled) {
         screenfull.off("change", this.change);
       }
     }
