@@ -2,7 +2,6 @@ import styles from "../../style/element-variables.module.scss";
 import defaultSettings from "@/settings";
 import { Commit } from "vuex";
 
-console.log(styles.theme)
 const { showSettings, tagsView, fixedHeader, sidebarLogo } = defaultSettings;
 const state = {
   theme: styles.theme,

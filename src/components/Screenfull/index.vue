@@ -1,7 +1,7 @@
 <template>
   <div>
     <svg-icon
-      :icon-class="isFullscreen ? 'exit-fullscreen' : 'fullscreen'"
+      :icon-class="isFullscreen ? 'el-iconfont-exit-fullscreen' : 'el-iconfont-screen-full'"
       @click="click"
     />
   </div>
@@ -9,9 +9,13 @@
 
 <script>
 import screenfull from "screenfull";
+import SvgIcon from "@/components/SvgIcon";
 
 export default {
   name: "Screenfull",
+  components:{
+    SvgIcon
+  },
   data() {
     return {
       isFullscreen: false
@@ -25,7 +29,7 @@ export default {
   },
   methods: {
     click() {
-      if (!screenfull.enabled) {
+      if (!screenfull.isEnabled) {
         this.$message({
           message: "you browser can not work",
           type: "warning"

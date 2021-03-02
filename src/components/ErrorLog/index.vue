@@ -6,7 +6,7 @@
       onclick.native="dialogTableVisible = true"
     >
       <el-button style="padding: 8px 10px;" size="small" type="danger">
-        <svg-icon icon-class="bug" />
+        <svg-icon icon-class="el-iconfont-bug" />
       </el-button>
     </el-badge>
 
@@ -61,8 +61,12 @@
 </template>
 
 <script>
+import SvgIcon from "@/components/SvgIcon";
 export default {
   name: "ErrorLog",
+  components: {
+    SvgIcon
+  },
   data() {
     return {
       dialogTableVisible: false

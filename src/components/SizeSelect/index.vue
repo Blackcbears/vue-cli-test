@@ -1,10 +1,10 @@
 <template>
   <el-dropdown trigger="click" @command="handleSetSize">
     <div>
-      <svg-icon class-name="size-icon" icon-class="size" />
+      <svg-icon class-name="size-icon" icon-class="el-iconfont-size" />
     </div>
-    <el-dropdown-menu>
-      <template #dropdown>
+    <template #dropdown>
+      <el-dropdown-menu>
         <el-dropdown-item
           v-for="item of sizeOptions"
           :key="item.value"
@@ -13,12 +13,14 @@
         >
           {{ item.label }}
         </el-dropdown-item>
-      </template>
-    </el-dropdown-menu>
+      </el-dropdown-menu>
+    </template>
   </el-dropdown>
 </template>
 
 <script>
+import SvgIcon from "@/components/SvgIcon";
+
 export default {
   data() {
     return {
@@ -29,6 +31,9 @@ export default {
         { label: "Mini", value: "mini" }
       ]
     };
+  },
+  components: {
+    SvgIcon
   },
   computed: {
     size() {

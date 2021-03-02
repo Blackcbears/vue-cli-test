@@ -6,7 +6,7 @@ import { Commit, Dispatch } from "vuex";
 const state = {
   token: getToken(),
   name: "",
-  avatar: "",
+  avatar: "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif",
   introduction: "",
   roles: []
 };

@@ -2,7 +2,7 @@
   <div :class="{ show: show }" class="header-search">
     <svg-icon
       class-name="search-icon"
-      icon-class="search"
+      icon-class="el-iconfont-search"
       @click.stop="click"
     />
     <el-select
@@ -31,9 +31,13 @@
 // make search results more in line with expectations
 import Fuse from "fuse.js";
 import path from "path";
+import SvgIcon from "@/components/SvgIcon";
 
 export default {
   name: "HeaderSearch",
+  components: {
+    SvgIcon
+  },
   data() {
     return {
       search: "",

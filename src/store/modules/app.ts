@@ -38,6 +38,7 @@ const mutations = {
     state.sidebar.withoutAnimation = withoutAnimation;
   },
   TOGGLE_DEVICE: (state: { device: DeviceType }, device: DeviceType) => {
+    console.log(device)
     state.device = device;
   },
   SET_SIZE: (state: { size: string }, size: string) => {

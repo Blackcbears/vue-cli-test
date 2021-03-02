@@ -45,7 +45,7 @@ const layout = defineComponent({
             <div class="drawer-bg" onClick={handleClickOutside} />
           )}
           <Sidebar class="sidebar-container" />
-          <div class={[showTagsView.value, "main-container"]}>
+          <div class={[showTagsView.value && "hasTagsView", "main-container"]}>
             <div class={fixedHeader.value && "fixed-header"}>
               <Navbar />
               {showTagsView.value && <TagsView />}

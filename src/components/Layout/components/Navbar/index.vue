@@ -30,31 +30,32 @@
           <img :src="avatar + '?imageView2/1/w/80/h/80'" class="user-avatar" />
           <i class="el-icon-caret-bottom" />
         </div>
-        <el-dropdown-menu>
-          <template #dropdown>
+        <template #dropdown>
+          <el-dropdown-menu>
             <router-link to="/profile/index">
               <el-dropdown-item>Profile</el-dropdown-item>
             </router-link>
-          </template>
-          <router-link to="/">
-            <el-dropdown-item>Dashboard</el-dropdown-item>
-          </router-link>
-          <a
-            target="_blank"
-            href="https://github.com/PanJiaChen/vue-element-admin/"
-          >
-            <el-dropdown-item>Github</el-dropdown-item>
-          </a>
-          <a
-            target="_blank"
-            href="https://panjiachen.github.io/vue-element-admin-site/#/"
-          >
-            <el-dropdown-item>Docs</el-dropdown-item>
-          </a>
-          <el-dropdown-item divided onclick.native="logout">
-            <span style="display:block;">Log Out</span>
-          </el-dropdown-item>
-        </el-dropdown-menu>
+
+            <router-link to="/">
+              <el-dropdown-item>Dashboard</el-dropdown-item>
+            </router-link>
+            <a
+              target="_blank"
+              href="https://github.com/PanJiaChen/vue-element-admin/"
+            >
+              <el-dropdown-item>Github</el-dropdown-item>
+            </a>
+            <a
+              target="_blank"
+              href="https://panjiachen.github.io/vue-element-admin-site/#/"
+            >
+              <el-dropdown-item>Docs</el-dropdown-item>
+            </a>
+            <el-dropdown-item divided onclick.native="logout">
+              <span style="display:block;">Log Out</span>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
       </el-dropdown>
     </div>
   </div>
@@ -99,7 +100,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .navbar {
   height: 50px;
   overflow: hidden;
@@ -149,6 +150,7 @@ export default {
       &.hover-effect {
         cursor: pointer;
         transition: background 0.3s;
+        line-height: 50px;
 
         &:hover {
           background: rgba(0, 0, 0, 0.025);
