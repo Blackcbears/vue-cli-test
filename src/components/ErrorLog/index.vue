@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import SvgIcon from "@/components/SvgIcon";
+import SvgIcon from "@/components/SvgIcon/index.vue";
 export default {
   name: "ErrorLog",
   components: {

@@ -1,16 +1,24 @@
 import { asyncRoutes, constantRoutes } from "@/router";
+import { RouteRecordRaw } from "vue-router";
+import { Commit } from "vuex";
+
+export interface PermissionState {
+  routes: RouteRecordRaw[];
+  dynamicRoutes: RouteRecordRaw[];
+}
 
 /**
  * Use meta.role to determine if the current user has permission
  * @param roles
  * @param route
  */
-function hasPermission(
-  roles: any[],
-  route: { meta: { roles: string | any[] } }
-) {
+function hasPermission(roles: string[], route: any) {
   if (route.meta && route.meta.roles) {
-    return roles.some(role => route.meta.roles.includes(role));
+    return roles.some(role => {
+      if (route.meta?.roles !== undefined) {
+        return route.meta.roles.includes(role);
+      }
+    });
   } else {
     return true;
   }
@@ -37,20 +45,20 @@ export function filterAsyncRoutes(routes: any[], roles: any[]) {
   return res;
 }
 
-const state = {
+const state: PermissionState = {
   routes: [],
-  addRoutes: []
+  dynamicRoutes: []
 };
 
 const mutations = {
-  SET_ROUTES: (state: { addRoutes: any; routes: any }, routes: any) => {
-    state.addRoutes = routes;
+  SET_ROUTES: (state: PermissionState, routes: RouteRecordRaw[]) => {
+    state.dynamicRoutes = routes;
     state.routes = constantRoutes.concat(routes);
   }
 };
 
 const actions = {
-  generateRoutes({ commit }: any, roles: any[]) {
+  generateRoutes({ commit }: { commit: Commit }, roles: string[]) {
     return new Promise(resolve => {
       let accessedRoutes;
       if (roles.includes("admin")) {

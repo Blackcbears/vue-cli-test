@@ -28,10 +28,15 @@ const sidebarItem = defineComponent({
   setup: function(props) {
     // 初始化当前渲染数据
     let onlyOneChild = reactive<Item>({
-      meta: { activeMenu: "", affix: false, breadcrumb: true, noCache: false },
+      meta: {
+        activeMenu: "",
+        affix: false,
+        breadcrumb: true,
+        noCache: false,
+        hidden: false
+      },
       name: "",
-      path: "",
-      hidden: false
+      path: ""
     });
     // 解构 props 并为 Object 设定类型
     const { item, isNest, basePath, className } = props as Readonly<{
@@ -97,7 +102,7 @@ const sidebarItem = defineComponent({
       if (
         hasOneShowingChild(item.children, item) &&
         (!onlyOneChild.children || onlyOneChild.noShowingChildren) &&
-        !item.alwaysShow
+        !item.meta.alwaysShow
       ) {
         if (onlyOneChild.meta) {
           return (
@@ -140,7 +145,7 @@ const sidebarItem = defineComponent({
     };
 
     // 如果序言展示页面，则开始渲染
-    if (!item.hidden) {
+    if (!item.meta.hidden) {
       return () => (
         <>
           <subMenu />

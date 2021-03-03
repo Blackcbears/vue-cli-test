@@ -64,7 +64,7 @@ const layout = defineComponent({
           {device.value === DeviceType.Mobile && sidebar.value.opened && (
             <div class="drawer-bg" onClick={handleClickOutside} />
           )}
-          <Sidebar class="sidebar-container" />
+          <Sidebar />
           <div class={[showTagsView.value && "hasTagsView", "main-container"]}>
             <div class={fixedHeader.value && "fixed-header"}>
               <Navbar />

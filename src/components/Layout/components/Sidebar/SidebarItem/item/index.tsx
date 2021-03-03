@@ -1,4 +1,5 @@
 import { defineComponent } from "vue";
+import SvgIcon from "@/components/SvgIcon/index.vue";
 import "./style.scss";
 
 const menuItem = defineComponent({
@@ -15,11 +16,11 @@ const menuItem = defineComponent({
   setup(props) {
     const vnodes: JSX.Element[] = [];
     if (props.icon) {
-      //if (icon.includes('el-icon')) {
-      vnodes.push(<i class={[props.icon, "sub-el-icon"]} />);
-      /* } else {
-                 vnodes.push(<svg-icon icon-class={icon}/>)
-             }*/
+      if (props.icon.includes("el-icon")) {
+        vnodes.push(<i class={[props.icon, "sub-el-icon"]} />);
+      } else {
+        vnodes.push(<SvgIcon icon-class={props.icon} />);
+      }
     }
     if (props.title) {
       vnodes.push(<span>{props.title}</span>);

@@ -6,6 +6,6 @@
 /**
  * User
  */
-export const LOGOUT = "/api/user/logout";
-export const LOGIN = "/api/user/login";
-export const USERINFO = "/api/user/info";
+export const LOGOUT = "/user/logout";
+export const LOGIN = "/user/login";
+export const USERINFO = "/user/info";

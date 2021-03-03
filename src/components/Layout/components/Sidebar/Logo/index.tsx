@@ -39,15 +39,13 @@ const SidebarLogo = defineComponent({
       <div
         class={[style.sidebarLogoContainer, props.collapse && style.collapse]}
       >
-        <transition name="sidebarLogoFade">
-          <router-link
-            key={props.collapse ? style.collapse : style.expand}
-            class={style.sidebarLogoLink}
-            to="/"
-          >
-            {imgOrTitle(logo.value, title.value, props.collapse)}
-          </router-link>
-        </transition>
+        <router-link
+          key={props.collapse ? style.collapse : style.expand}
+          class={style.sidebarLogoLink}
+          to="/"
+        >
+          {imgOrTitle(logo.value, title.value, props.collapse)}
+        </router-link>
       </div>
     );
   }

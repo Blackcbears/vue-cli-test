@@ -6,6 +6,11 @@ import ElementPlus from "element-plus";
 import "./style/element-variables.scss";
 import "./style/index.scss";
 
+import "./permission"; // permission control
+
+const { mockXHR } = require("../mock");
+mockXHR();
+
 const app = createApp(App);
 app.use(store);
 app.use(router);

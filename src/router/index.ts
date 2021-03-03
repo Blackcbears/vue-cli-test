@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import Layout from "@/components/Layout";
 
 /**
@@ -6,13 +6,27 @@ import Layout from "@/components/Layout";
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
-export const constantRoutes = [
+export const constantRoutes: Array<RouteRecordRaw> = [
   {
     path: "/redirect",
     component: Layout,
-    hidden: true
+    meta: { hidden: true }
   },
-
+  {
+    path: "/404",
+    component: () => import("@/views/error-page/404.vue"),
+    meta: { hidden: true }
+  },
+  {
+    path: "/401",
+    component: () => import("@/views/error-page/401.vue"),
+    meta: { hidden: true }
+  },
+  {
+    path: "/login",
+    component: () => import("@/views/login/index.vue"),
+    meta: { hidden: true }
+  },
   {
     path: "/",
     component: Layout,
@@ -32,14 +46,15 @@ export const constantRoutes = [
  * asyncRoutes
  * the routes that need to be dynamically loaded based on user roles
  */
-export const asyncRoutes = [
+export const asyncRoutes: Array<RouteRecordRaw> = [
   {
     path: "/permission",
     component: Layout,
     redirect: "/permission/page",
-    alwaysShow: true, // will always show the root menu
+
     name: "Permission",
     meta: {
+      alwaysShow: true, // will always show the root menu
       title: "Permission",
       icon: "lock",
       roles: ["admin", "editor"] // you can set roles in root nav
@@ -58,7 +73,7 @@ export const asyncRoutes = [
   },
 
   // 404 page must be placed at the end !!!
-  { path: "*", redirect: "/404", hidden: true }
+  { path: "*", redirect: "/404", meta: { hidden: true } }
 ];
 
 const router = createRouter({
