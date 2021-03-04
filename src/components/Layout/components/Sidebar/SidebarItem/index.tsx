@@ -47,8 +47,9 @@ const sidebarItem = defineComponent({
     }>;
     // 判定是否需要展示页面
     const hasOneShowingChild = (children: Item[] | undefined, parent: Item) => {
+      let showingChildren = [];
       if (children) {
-        const showingChildren = children.filter(item => {
+        showingChildren = children.filter(item => {
           if (props.item.hidden) {
             return false;
           } else {
@@ -57,15 +58,15 @@ const sidebarItem = defineComponent({
             return true;
           }
         });
-        // When there is only one child router, the child router is displayed by default
-        if (showingChildren.length === 1) {
-          return true;
-        }
-        // Show parent if there are no child router to display
-        if (showingChildren.length === 0) {
-          onlyOneChild = { ...parent, path: "", noShowingChildren: true };
-          return true;
-        }
+      }
+      // When there is only one child router, the child router is displayed by default
+      if (showingChildren.length === 1) {
+        return true;
+      }
+      // Show parent if there are no child router to display
+      if (showingChildren.length === 0) {
+        onlyOneChild = { ...parent, path: "", noShowingChildren: true };
+        return true;
       }
       return false;
     };
@@ -102,7 +103,7 @@ const sidebarItem = defineComponent({
       if (
         hasOneShowingChild(item.children, item) &&
         (!onlyOneChild.children || onlyOneChild.noShowingChildren) &&
-        !item.meta.alwaysShow
+        !(props.item.meta && props.item.meta.alwaysShow)
       ) {
         if (onlyOneChild.meta) {
           return (
@@ -110,10 +111,15 @@ const sidebarItem = defineComponent({
               <el-menu-item
                 index={resolvePath(onlyOneChild.path)}
                 class={isNest ? className : ["submenu-title-noDropdown"]}
+                v-slots={{
+                  title: () =>
+                    onlyOneChild.meta.title && (
+                      <span>{onlyOneChild.meta.title}</span>
+                    )
+                }}
               >
                 <MenuItem
                   icon={onlyOneChild.meta.icon || (item.meta && item.meta.icon)}
-                  title={onlyOneChild.meta.title}
                 />
               </el-menu-item>
             </AppLink>
@@ -138,14 +144,14 @@ const sidebarItem = defineComponent({
                 )
             }}
           >
-            {sidebarItemData(item.children as Item[])}
+            {item.children && sidebarItemData(item.children as Item[])}
           </el-submenu>
         );
       }
     };
 
     // 如果序言展示页面，则开始渲染
-    if (!item.meta.hidden) {
+    if (!item.meta || !props.item.meta.hidden) {
       return () => (
         <>
           <subMenu />

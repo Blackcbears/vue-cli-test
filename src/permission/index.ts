@@ -4,9 +4,13 @@
  * @date 2021-02-02 9:57
  */
 import NProgress from "nprogress"; // progress bar
-import router from "../router";
-import { RouteLocationNormalized, RouteRecordRaw } from "vue-router";
-import { useStore } from "vuex";
+import router from "@/router";
+import {
+  NavigationGuardNext,
+  RouteLocationNormalized,
+  RouteRecordRaw
+} from "vue-router";
+import { useStore } from "@/store";
 import { ElMessage } from "element-plus";
 import "nprogress/nprogress.css"; // progress bar style
 import { getToken } from "@/utils/auth"; // get token from cookie
@@ -19,20 +23,14 @@ const whiteList = ["/login", "/auth-redirect"]; // no redirect whitelist
 router.beforeEach(
   async (
     to: RouteLocationNormalized,
-    from: RouteLocationNormalized,
-    next: any
+    _: RouteLocationNormalized,
+    next: NavigationGuardNext
   ) => {
     const store = useStore();
     // start progress bar
     NProgress.start();
-    // set page title
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-    // @ts-ignore
-    document.title = getPageTitle(to.meta?.title);
-
     // determine whether the user has logged in
     const hasToken = getToken();
-    console.log(store);
     if (hasToken) {
       if (to.path === "/login") {
         // if is logged in, redirect to the home page
@@ -53,7 +51,6 @@ router.beforeEach(
                 router.addRoute(route);
               }
             );
-
             // hack method to ensure that addRoutes is complete
             // set the replace: true, so the navigation will not leave a history record
             next({ ...to, replace: true });
@@ -64,6 +61,8 @@ router.beforeEach(
             next(`/login?redirect=${to.path}`);
             NProgress.done();
           }
+        } else {
+          next();
         }
       }
     } else {
@@ -81,7 +80,11 @@ router.beforeEach(
   }
 );
 
-router.afterEach(() => {
+router.afterEach((to: RouteLocationNormalized) => {
   // finish progress bar
   NProgress.done();
+  // set page title
+  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+  // @ts-ignore
+  document.title = getPageTitle(to.meta?.title);
 });

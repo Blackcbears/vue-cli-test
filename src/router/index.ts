@@ -7,25 +7,44 @@ import Layout from "@/components/Layout";
  * all roles can be accessed
  */
 export const constantRoutes: Array<RouteRecordRaw> = [
-  {
+  /*  {
     path: "/redirect",
     component: Layout,
-    meta: { hidden: true }
-  },
+    meta: { hidden: true },
+    children: [
+      {
+        path: "/redirect/:path(.*)",
+        component: () =>
+          import(
+            /!* webpackChunkName: "redirect" *!/ "@/views/redirect/Index.vue"
+          )
+      }
+    ]
+  },*/
   {
-    path: "/404",
-    component: () => import("@/views/error-page/404.vue"),
-    meta: { hidden: true }
+    path: "/login",
+    name: "Login",
+    component: () => import("@/views/login/index.vue")
   },
   {
     path: "/401",
-    component: () => import("@/views/error-page/401.vue"),
-    meta: { hidden: true }
+    component: () =>
+      import(/* webpackChunkName: "error-page-401" */ "@/views/errorPage/401"),
+    name: "Page401",
+    meta: {
+      title: "page401",
+      noCache: true
+    }
   },
   {
-    path: "/login",
-    component: () => import("@/views/login/index.vue"),
-    meta: { hidden: true }
+    path: "/404",
+    component: () =>
+      import(/* webpackChunkName: "error-page-404" */ "@/views/errorPage/404"),
+    name: "Page404",
+    meta: {
+      title: "page404",
+      noCache: true
+    }
   },
   {
     path: "/",
@@ -33,10 +52,29 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     redirect: "/dashboard",
     children: [
       {
-        path: "dashboard",
+        path: "/dashboard",
         component: () => import("@/views/Home.vue"),
         name: "Dashboard",
-        meta: { title: "首页", icon: "dashboard", affix: true }
+        meta: { title: "首页", icon: "el-icon-s-help", affix: true }
+      }
+    ]
+  },
+  {
+    path: "/profile",
+    component: Layout,
+    redirect: "/profile/index",
+    meta: { hidden: true },
+    children: [
+      {
+        path: "index",
+        component: () =>
+          import(/* webpackChunkName: "profile" */ "@/views/profile/Index.vue"),
+        name: "Profile",
+        meta: {
+          title: "profile",
+          icon: "user",
+          noCache: true
+        }
       }
     ]
   }
@@ -51,12 +89,11 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
     path: "/permission",
     component: Layout,
     redirect: "/permission/page",
-
     name: "Permission",
     meta: {
       alwaysShow: true, // will always show the root menu
       title: "Permission",
-      icon: "lock",
+      icon: "el-icon-s-help",
       roles: ["admin", "editor"] // you can set roles in root nav
     }
   },
@@ -73,7 +110,7 @@ export const asyncRoutes: Array<RouteRecordRaw> = [
   },
 
   // 404 page must be placed at the end !!!
-  { path: "*", redirect: "/404", meta: { hidden: true } }
+  { path: "/:pathMatch(.*)", redirect: "/404", meta: { hidden: true } }
 ];
 
 const router = createRouter({

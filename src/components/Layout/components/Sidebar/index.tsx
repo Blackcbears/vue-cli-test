@@ -21,7 +21,6 @@ const sidebar = defineComponent({
     });
 
     const routes = computed<Item[]>(() => {
-      console.log(store.state.permission.routes);
       return store.state.permission.routes;
     });
 

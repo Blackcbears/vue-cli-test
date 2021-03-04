@@ -1,7 +1,14 @@
+<!--
+ * @Description:
+ * @Author: ZY
+ * @Date: 2020-12-24 10:35:59
+ * @LastEditors: ZY
+ * @LastEditTime: 2021-01-11 14:10:49
+-->
 <template>
   <div id="tags-view-container" class="tags-view-container">
-    <scroll-pane
-      ref="scrollPane"
+    <ScrollPane
+      ref="scrollPaneRef"
       class="tags-view-wrapper"
       @scroll="handleScroll"
     >
@@ -11,18 +18,19 @@
         :key="tag.path"
         :class="isActive(tag) ? 'active' : ''"
         :to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }"
+        tag="span"
         class="tags-view-item"
-        onclick.middle.native="!isAffix(tag) ? closeSelectedTag(tag) : ''"
-        oncontextmenu.prevent.native="openMenu(tag, $event)"
+        @click.middle="!isAffix(tag) ? closeSelectedTag(tag) : ''"
+        @contextmenu.prevent="openMenu(tag, $event)"
       >
-        {{ tag.title }}
+        {{ tag.meta.title }}
         <span
           v-if="!isAffix(tag)"
           class="el-icon-close"
           @click.prevent.stop="closeSelectedTag(tag)"
         />
       </router-link>
-    </scroll-pane>
+    </ScrollPane>
     <ul
       v-show="visible"
       :style="{ left: left + 'px', top: top + 'px' }"
@@ -38,55 +46,131 @@
   </div>
 </template>
 
-<script>
-import ScrollPane from "./ScrollPane";
+<script lang="ts">
 import path from "path";
+import { useStore } from "vuex";
+import {
+  computed,
+  defineComponent,
+  getCurrentInstance,
+  nextTick,
+  onBeforeMount,
+  reactive,
+  ref,
+  toRefs,
+  watch
+} from "vue";
+import { RouteLocationNormalized, RouteRecordRaw, useRoute } from "vue-router";
+import router from "@/router";
+import ScrollPane from "./ScrollPane.vue";
 
-export default {
-  components: { ScrollPane },
-  data() {
-    return {
+export interface TagView extends Partial<RouteLocationNormalized> {
+  title?: string;
+}
+
+export default defineComponent({
+  components: {
+    ScrollPane
+  },
+  setup() {
+    const store = useStore();
+    const instance = getCurrentInstance();
+    const currentRoute = useRoute();
+    const scrollPaneRef = ref(null);
+    const { ctx } = instance as any;
+    const toLastView = (visitedViews: TagView[], view: TagView) => {
+      const latestView = visitedViews.slice(-1)[0];
+      if (latestView !== undefined && latestView.fullPath !== undefined) {
+        router.push(latestView.fullPath).catch(err => {
+          console.warn(err);
+        });
+      } else {
+        // Default redirect to the home page if there is no tags-view, adjust it if you want
+        if (view.name === "Dashboard") {
+          // to reload home page
+          router.push({ path: "/redirect" + view.fullPath }).catch(err => {
+            console.warn(err);
+          });
+        } else {
+          router.push("/").catch(err => {
+            console.warn(err);
+          });
+        }
+      }
+    };
+    const state = reactive({
       visible: false,
       top: 0,
       left: 0,
-      selectedTag: {},
-      affixTags: []
-    };
-  },
-  computed: {
-    visitedViews() {
-      return this.$store.state.tagsView.visitedViews;
-    },
-    routes() {
-      return this.$store.state.permission.routes;
-    }
-  },
-  watch: {
-    $route() {
-      this.addTags();
-      this.moveToCurrentTag();
-    },
-    visible(value) {
-      if (value) {
-        document.body.addEventListener("click", this.closeMenu);
-      } else {
-        document.body.removeEventListener("click", this.closeMenu);
+      selectedTag: {} as TagView,
+      affixTags: [] as TagView[],
+      isActive: (route: TagView) => {
+        return route.path === currentRoute.path;
+      },
+      isAffix: (tag: TagView) => {
+        return tag.meta && tag.meta.affix;
+      },
+      refreshSelectedTag: (view: TagView) => {
+        store.dispatch("tagsView/delCachedView", view);
+        const { fullPath } = view;
+        nextTick(() => {
+          router.replace({ path: "/redirect" + fullPath }).catch(err => {
+            console.warn(err);
+          });
+        });
+      },
+      closeSelectedTag: (view: TagView) => {
+        store.dispatch("tagsView/delView", view);
+        if (state.isActive(view)) {
+          toLastView(store.state.tagViews.visitedViews, view);
+        }
+      },
+      closeOthersTags: () => {
+        if (
+          state.selectedTag.fullPath !== currentRoute.path &&
+          state.selectedTag.fullPath !== undefined
+        ) {
+          router.push(state.selectedTag.fullPath).catch(err => {
+            console.log(err);
+          });
+        }
+        store.dispatch("tagsView/delOthersViews", state.selectedTag as TagView);
+      },
+      closeAllTags: (view: TagView) => {
+        store.dispatch("tagsView/delAllViews", undefined);
+        if (state.affixTags.some(tag => tag.path === currentRoute.path)) {
+          return;
+        }
+        toLastView(store.state.tagViews.visitedViews, view);
+      },
+      openMenu: (tag: TagView, e: MouseEvent) => {
+        const menuMinWidth = 105;
+        const offsetLeft = ctx.$el.getBoundingClientRect().left; // container margin left
+        const offsetWidth = ctx.$el.offsetWidth; // container width
+        const maxLeft = offsetWidth - menuMinWidth; // left boundary
+        const left = e.clientX - offsetLeft + 15; // 15: margin right
+        if (left > maxLeft) {
+          state.left = maxLeft;
+        } else {
+          state.left = left;
+        }
+        state.top = e.clientY;
+        state.visible = true;
+        state.selectedTag = tag;
+      },
+      closeMenu: () => {
+        state.visible = false;
+      },
+      handleScroll: () => {
+        state.closeMenu();
       }
-    }
-  },
-  mounted() {
-    this.initTags();
-    this.addTags();
-  },
-  methods: {
-    isActive(route) {
-      return route.path === this.$route.path;
-    },
-    isAffix(tag) {
-      return tag.meta && tag.meta.affix;
-    },
-    filterAffixTags(routes, basePath = "/") {
-      let tags = [];
+    });
+    const visitedViews = computed(() => {
+      return store.state.tagsView.visitedViews;
+    });
+    const routes = computed(() => store.state.permission.routes);
+    const filterAffixTags = (routes: RouteRecordRaw[], basePath = "/") => {
+      let tags: TagView[] = [];
       routes.forEach(route => {
         if (route.meta && route.meta.affix) {
           const tagPath = path.resolve(basePath, route.path);
@@ -98,122 +182,89 @@ export default {
           });
         }
         if (route.children) {
-          const tempTags = this.filterAffixTags(route.children, route.path);
-          if (tempTags.length >= 1) {
-            tags = [...tags, ...tempTags];
+          const childTags = filterAffixTags(route.children, route.path);
+          if (childTags.length >= 1) {
+            tags = tags.concat(childTags);
           }
         }
       });
       return tags;
-    },
-    initTags() {
-      const affixTags = (this.affixTags = this.filterAffixTags(this.routes));
-      for (const tag of affixTags) {
+    };
+    const initTags = () => {
+      state.affixTags = filterAffixTags(routes.value);
+      for (const tag of state.affixTags) {
         // Must have tag name
         if (tag.name) {
-          this.$store.dispatch("tagsView/addVisitedView", tag);
+          store.dispatch("tagsView/addVisitedView", tag as TagView);
         }
       }
-    },
-    addTags() {
-      const { name } = this.$route;
-      if (name) {
-        this.$store.dispatch("tagsView/addView", this.$route);
+    };
+    const addTags = () => {
+      if (currentRoute.name) {
+        store.dispatch("tagsView/addView", currentRoute);
       }
       return false;
-    },
-    moveToCurrentTag() {
-      const tags = this.$refs.tag;
-      this.$nextTick(() => {
-        for (const tag of tags) {
-          if (tag.to.path === this.$route.path) {
-            this.$refs.scrollPane.moveToTarget(tag);
-            // when query is different then update
-            if (tag.to.fullPath !== this.$route.fullPath) {
-              this.$store.dispatch("tagsView/updateVisitedView", this.$route);
+    };
+    const moveToCurrentTag = () => {
+      const tags = instance?.refs.tag as any[];
+      nextTick(() => {
+        if (tags.length > 0) {
+          for (const tag of tags) {
+            console.log(3);
+            if ((tag.to as TagView).path === currentRoute.path) {
+              (scrollPaneRef.value as any).moveToCurrentTag(tag);
+              // When query is different then update
+              if ((tag.to as TagView).fullPath !== currentRoute.fullPath) {
+                store.dispatch("tagsView/updateVisitedView", currentRoute);
+              }
             }
-            break;
           }
         }
       });
-    },
-    refreshSelectedTag(view) {
-      this.$store.dispatch("tagsView/delCachedView", view).then(() => {
-        const { fullPath } = view;
-        this.$nextTick(() => {
-          this.$router.replace({
-            path: "/redirect" + fullPath
-          });
-        });
-      });
-    },
-    closeSelectedTag(view) {
-      this.$store
-        .dispatch("tagsView/delView", view)
-        .then(({ visitedViews }) => {
-          if (this.isActive(view)) {
-            this.toLastView(visitedViews, view);
-          }
-        });
-    },
-    closeOthersTags() {
-      this.$router.push(this.selectedTag);
-      this.$store
-        .dispatch("tagsView/delOthersViews", this.selectedTag)
-        .then(() => {
-          this.moveToCurrentTag();
-        });
-    },
-    closeAllTags(view) {
-      this.$store.dispatch("tagsView/delAllViews").then(({ visitedViews }) => {
-        if (this.affixTags.some(tag => tag.path === view.path)) {
-          return;
-        }
-        this.toLastView(visitedViews, view);
-      });
-    },
-    toLastView(visitedViews, view) {
-      const latestView = visitedViews.slice(-1)[0];
-      if (latestView) {
-        this.$router.push(latestView.fullPath);
-      } else {
-        // now the default is to redirect to the home page if there is no tags-view,
-        // you can adjust it according to your needs.
-        if (view.name === "Dashboard") {
-          // to reload home page
-          this.$router.replace({ path: "/redirect" + view.fullPath });
-        } else {
-          this.$router.push("/");
-        }
-      }
-    },
-    openMenu(tag, e) {
-      const menuMinWidth = 105;
-      const offsetLeft = this.$el.getBoundingClientRect().left; // container margin left
-      const offsetWidth = this.$el.offsetWidth; // container width
-      const maxLeft = offsetWidth - menuMinWidth; // left boundary
-      const left = e.clientX - offsetLeft + 15; // 15: margin right
-
-      if (left > maxLeft) {
-        this.left = maxLeft;
-      } else {
-        this.left = left;
-      }
-
-      this.top = e.clientY;
-      this.visible = true;
-      this.selectedTag = tag;
-    },
-    closeMenu() {
-      this.visible = false;
-    },
-    handleScroll() {
-      this.closeMenu();
-    }
+    };
+    watch(useRoute(), () => {
+      addTags();
+      moveToCurrentTag();
+    });
+    onBeforeMount(() => {
+      initTags();
+      addTags();
+    });
+    return {
+      visitedViews,
+      routes,
+      scrollPaneRef,
+      ...toRefs(state)
+    };
   }
-};
+});
 </script>
 
+<style lang="scss" scoped>
+// Reset element css of el-icon-close
+.tags-view-wrapper {
+  .tags-view-item {
+    .el-icon-close {
+      width: 16px;
+      height: 16px;
+      vertical-align: 2px;
+      border-radius: 50%;
+      text-align: center;
+      transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+      transform-origin: 100% 50%;
+      &:before {
+        transform: scale(0.6);
+        display: inline-block;
+        vertical-align: -3px;
+      }
+      &:hover {
+        background-color: #b4bccc;
+        color: #fff;
+      }
+    }
+  }
+}
+</style>
 <style lang="scss" scoped>
 .tags-view-container {
   height: 34px;
@@ -276,32 +327,6 @@ export default {
       cursor: pointer;
       &:hover {
         background: #eee;
-      }
-    }
-  }
-}
-</style>
-
-<style lang="scss">
-//reset element css of el-icon-close
-.tags-view-wrapper {
-  .tags-view-item {
-    .el-icon-close {
-      width: 16px;
-      height: 16px;
-      vertical-align: 2px;
-      border-radius: 50%;
-      text-align: center;
-      transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
-      transform-origin: 100% 50%;
-      &:before {
-        transform: scale(0.6);
-        display: inline-block;
-        vertical-align: -3px;
-      }
-      &:hover {
-        background-color: #b4bccc;
-        color: #fff;
       }
     }
   }
