@@ -1,10 +1,14 @@
+/**
+ * @name: index
+ * @author: CuiJing
+ * @date: 2021/3/5 1:21
+ * @description：
+ * @update: 2021/3/5 1:21
+ */
 import Cookies from "js-cookie";
 import { Commit } from "vuex";
-
-export enum DeviceType {
-  Mobile,
-  Desktop
-}
+import { AppMutationTypes } from "./MutationTypes";
+import { AppTypes, DeviceType } from "./AppTypes";
 
 const state = {
   sidebar: {
@@ -18,7 +22,7 @@ const state = {
 };
 
 const mutations = {
-  TOGGLE_SIDEBAR: (state: {
+  [AppMutationTypes.TOGGLE_SIDEBAR]: (state: {
     sidebar: { opened: boolean; withoutAnimation: boolean };
   }) => {
     state.sidebar.opened = !state.sidebar.opened;
@@ -29,7 +33,7 @@ const mutations = {
       Cookies.set("sidebarStatus", "0");
     }
   },
-  CLOSE_SIDEBAR: (
+  [AppMutationTypes.CLOSE_SIDEBAR]: (
     state: { sidebar: { opened: boolean; withoutAnimation: boolean } },
     withoutAnimation: boolean
   ) => {
@@ -37,35 +41,41 @@ const mutations = {
     state.sidebar.opened = false;
     state.sidebar.withoutAnimation = withoutAnimation;
   },
-  TOGGLE_DEVICE: (state: { device: DeviceType }, device: DeviceType) => {
+  [AppMutationTypes.TOGGLE_DEVICE]: (
+    state: { device: DeviceType },
+    device: DeviceType
+  ) => {
     state.device = device;
   },
-  SET_SIZE: (state: { size: string }, size: string) => {
+  [AppMutationTypes.SET_SIZE]: (state: { size: string }, size: string) => {
     state.size = size;
     Cookies.set("size", size);
   }
 };
 
 const actions = {
-  toggleSideBar({ commit }: { commit: Commit }) {
-    commit("TOGGLE_SIDEBAR");
+  [AppTypes.APP_TOGGLE_SIDEBAR]({ commit }: { commit: Commit }) {
+    commit(AppMutationTypes.TOGGLE_SIDEBAR);
   },
-  closeSideBar(
+  [AppTypes.APP_CLOSE_SIDEBAR](
     { commit }: { commit: Commit },
     { withoutAnimation }: { withoutAnimation: boolean }
   ) {
-    commit("CLOSE_SIDEBAR", withoutAnimation);
+    commit(AppMutationTypes.CLOSE_SIDEBAR, withoutAnimation);
   },
-  toggleDevice({ commit }: { commit: Commit }, device: DeviceType) {
-    commit("TOGGLE_DEVICE", device);
+  [AppTypes.APP_TOGGLE_DEVICE](
+    { commit }: { commit: Commit },
+    device: DeviceType
+  ) {
+    commit(AppMutationTypes.TOGGLE_DEVICE, device);
   },
-  setSize({ commit }: { commit: Commit }, size: string) {
-    commit("SET_SIZE", size);
+  [AppTypes.APP_SET_SIZE]({ commit }: { commit: Commit }, size: string) {
+    commit(AppMutationTypes.SET_SIZE, size);
   }
 };
 
 export default {
-  namespaced: true,
+  namespaced: false,
   state,
   mutations,
   actions

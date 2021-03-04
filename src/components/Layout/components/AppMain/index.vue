@@ -10,18 +10,27 @@
   </section>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent, computed } from "vue";
+import { useStore } from "vuex";
+import { useRoute } from "vue-router";
+export default defineComponent({
   name: "AppMain",
-  computed: {
-    cachedViews() {
-      return this.$store.state.tagsView.cachedViews;
-    },
-    key() {
-      return this.$route.path;
-    }
+  setup() {
+    const store = useStore();
+    const route = useRoute();
+    const cachedViews = computed(() => {
+      return store.state.tagsView.cachedViews;
+    });
+    const key = computed(() => {
+      return route.path;
+    });
+    return {
+      cachedViews,
+      key
+    };
   }
-};
+});
 </script>
 
 <style lang="scss" scoped>

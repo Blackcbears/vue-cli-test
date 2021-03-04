@@ -78,6 +78,7 @@
 import { defineComponent, PropType } from "vue";
 
 import PanThumb from "@/components/pan-thumb/Index.vue";
+
 interface Profile {
   name: string;
   email: string;

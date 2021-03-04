@@ -23,6 +23,7 @@
 
 <script>
 import SvgIcon from "@/components/SvgIcon";
+import { AppTypes } from "@/store/modules/app/AppTypes";
 
 export default {
   data() {
@@ -46,7 +47,7 @@ export default {
   methods: {
     handleSetSize(size) {
       this.$ELEMENT.size = size;
-      this.$store.dispatch("app/setSize", size);
+      this.$store.dispatch(AppTypes.APP_SET_SIZE, size);
       this.refreshView();
       this.$message({
         message: "Switch Size Success",

@@ -9,11 +9,11 @@ import { AppMain, Navbar, Settings, Sidebar, TagsView } from "./components";
 import RightPanel from "@/components/RightPanel/index.vue";
 import { useStore } from "vuex";
 import "./style.scss";
-import { DeviceType } from "@/store/modules/app";
 import ResizeHandler from "@/components/Layout/mixin/ResizeHandler";
+import { AppTypes, DeviceType } from "@/store/modules/app/AppTypes";
 
 const layout = defineComponent({
-  setup() {
+  setup: function() {
     const {
       sidebar,
       device,
@@ -34,11 +34,9 @@ const layout = defineComponent({
     onBeforeUnmount(() => {
       removeEventListenerResize();
     });
-
     const handleClickOutside = () => {
-      store.dispatch("app/closeSideBar", { withoutAnimation: false });
+      store.dispatch(AppTypes.APP_CLOSE_SIDEBAR, { withoutAnimation: false });
     };
-
     const showSettings = computed<boolean>(() => {
       return store.state.settings.showSettings;
     });
@@ -59,26 +57,24 @@ const layout = defineComponent({
     });
 
     return () => (
-      <>
-        <div class={[classObj.value, "app-wrapper"]}>
-          {device.value === DeviceType.Mobile && sidebar.value.opened && (
-            <div class="drawer-bg" onClick={handleClickOutside} />
-          )}
-          <Sidebar />
-          <div class={[showTagsView.value && "hasTagsView", "main-container"]}>
-            <div class={fixedHeader.value && "fixed-header"}>
-              <Navbar />
-              {showTagsView.value && <TagsView />}
-            </div>
-            <AppMain />
-            {showSettings.value && (
-              <RightPanel>
-                <Settings />
-              </RightPanel>
-            )}
+      <div class={[classObj.value, "app-wrapper"]}>
+        {device.value === DeviceType.Mobile && sidebar.value.opened && (
+          <div class="drawer-bg" onClick={handleClickOutside} />
+        )}
+        <Sidebar />
+        <div class={[showTagsView.value && "hasTagsView", "main-container"]}>
+          <div class={fixedHeader.value && "fixed-header"}>
+            <Navbar />
+            {showTagsView.value && <TagsView />}
           </div>
+          <AppMain />
+          {showSettings.value && (
+            <RightPanel>
+              <Settings />
+            </RightPanel>
+          )}
         </div>
-      </>
+      </div>
     );
   }
 });

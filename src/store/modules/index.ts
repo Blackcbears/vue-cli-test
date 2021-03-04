@@ -1,6 +1,6 @@
 import user from "./user";
 import settings from "./settings";
-import app from "./app";
+import app from "./app/index";
 import permission from "./permission";
 import errorLog from "./errorLog";
 import tagsView from "./tagsView";

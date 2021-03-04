@@ -14,7 +14,7 @@ const mocks = [...user, ...role, ...article, ...search];
 function mockXHR() {
   // mock patch
   // https://github.com/nuysoft/Mock/issues/300
-  Mock.XHR.prototype.proxy_send = Mock.XHR.prototype.send;
+  Mock.XHR.prototype.proxySend = Mock.XHR.prototype.send;
   Mock.XHR.prototype.send = function() {
     if (this.custom.xhr) {
       this.custom.xhr.withCredentials = this.withCredentials || false;
@@ -23,7 +23,7 @@ function mockXHR() {
         this.custom.xhr.responseType = this.responseType;
       }
     }
-    this.proxy_send(...arguments);
+    this.proxySend(...arguments);
   };
 
   function XHR2ExpressReqWrap(respond) {

@@ -29,58 +29,55 @@
   </div>
 </template>
 
-<script>
-import ThemePicker from "@/components/ThemePicker";
+<script lang="ts">
+import { defineComponent, computed } from "vue";
+import ThemePicker from "@/components/ThemePicker/index.vue";
+import { useStore } from "vuex";
 
-export default {
-  components: { ThemePicker },
-  data() {
-    return {};
+export default defineComponent({
+  components: {
+    ThemePicker
   },
-  computed: {
-    fixedHeader: {
-      get() {
-        return this.$store.state.settings.fixedHeader;
-      },
-      set(val) {
-        this.$store.dispatch("settings/changeSetting", {
+  setup() {
+    const store = useStore();
+    const fixedHeader = computed({
+      get: () => store.state.settings.fixedHeader,
+      set: val =>
+        store.dispatch("settings/changeSetting", {
           key: "fixedHeader",
           value: val
-        });
-      }
-    },
-    tagsView: {
-      get() {
-        return this.$store.state.settings.tagsView;
-      },
-      set(val) {
-        this.$store.dispatch("settings/changeSetting", {
+        })
+    });
+    const tagsView = computed({
+      get: () => store.state.settings.tagsView,
+      set: val =>
+        store.dispatch("settings/changeSetting", {
           key: "tagsView",
           value: val
-        });
-      }
-    },
-    sidebarLogo: {
-      get() {
-        return this.$store.state.settings.sidebarLogo;
-      },
-      set(val) {
-        this.$store.dispatch("settings/changeSetting", {
+        })
+    });
+    const sidebarLogo = computed({
+      get: () => store.state.settings.sidebarLogo,
+      set: val =>
+        store.dispatch("settings/changeSetting", {
           key: "sidebarLogo",
           value: val
-        });
-      }
-    }
-  },
-  methods: {
-    themeChange(val) {
-      this.$store.dispatch("settings/changeSetting", {
+        })
+    });
+    const themeChange = (val: any) => {
+      store.dispatch("settings/changeSetting", {
         key: "theme",
         value: val
       });
-    }
+    };
+    return {
+      fixedHeader,
+      tagsView,
+      sidebarLogo,
+      themeChange
+    };
   }
-};
+});
 </script>
 
 <style lang="scss" scoped>

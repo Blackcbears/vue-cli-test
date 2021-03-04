@@ -16,11 +16,19 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { addClass, removeClass } from "@/utils";
+import {
+  defineComponent,
+  computed,
+  watch,
+  ref,
+  onMounted,
+  onBeforeUnmount
+} from "vue";
+import { useStore } from "vuex";
 
-export default {
-  name: "RightPanel",
+export default defineComponent({
   props: {
     clickNotClose: {
       default: false,
@@ -31,53 +39,54 @@ export default {
       type: Number
     }
   },
-  data() {
-    return {
-      show: false
+  setup(props) {
+    const store = useStore();
+    // computed
+    const theme = computed(() => {
+      return store.state.settings.theme;
+    });
+    // data
+    const show = ref(false);
+    const rightPanel = ref(null);
+    // methods
+    const closeSidebar = (evt: any) => {
+      const parent = evt.target.closest(".rightPanel");
+      if (!parent) {
+        show.value = false;
+        window.removeEventListener("click", closeSidebar);
+      }
     };
-  },
-  computed: {
-    theme() {
-      return this.$store.state.settings.theme;
-    }
-  },
-  watch: {
-    show(value) {
-      if (value && !this.clickNotClose) {
-        this.addEventClick();
+    const addEventClick = () => {
+      window.addEventListener("click", closeSidebar);
+    };
+    const insertToBody = () => {
+      const body = document.querySelector("body");
+      body?.insertBefore(rightPanel.value as any, body.firstChild);
+    };
+    // watch
+    watch(show, value => {
+      if (value && !props.clickNotClose) {
+        addEventClick();
       }
       if (value) {
         addClass(document.body, "showRightPanel");
       } else {
         removeClass(document.body, "showRightPanel");
       }
-    }
-  },
-  mounted() {
-    this.insertToBody();
-  },
-  beforeUnmount() {
-    const elx = this.$refs.rightPanel;
-    elx.remove();
-  },
-  methods: {
-    addEventClick() {
-      window.addEventListener("click", this.closeSidebar);
-    },
-    closeSidebar(evt) {
-      const parent = evt.target.closest(".rightPanel");
-      if (!parent) {
-        this.show = false;
-        window.removeEventListener("click", this.closeSidebar);
-      }
-    },
-    insertToBody() {
-      const elx = this.$refs.rightPanel;
-      const body = document.querySelector("body");
-      body.insertBefore(elx, body.firstChild);
-    }
+    });
+    onMounted(() => {
+      insertToBody();
+    });
+    onBeforeUnmount(() => {
+      (rightPanel.value as any).remove();
+    });
+    return {
+      rightPanel,
+      theme,
+      show
+    };
   }
-};
+});
 </script>
 
 <style>

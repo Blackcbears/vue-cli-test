@@ -48,17 +48,19 @@
   </div>
 </template>
 
-<script>
-import { mapGetters } from "vuex";
-import Breadcrumb from "@/components/Breadcrumb";
-import Hamburger from "@/components/Hamburger";
-import ErrorLog from "@/components/ErrorLog";
-import Screenfull from "@/components/Screenfull";
-import SizeSelect from "@/components/SizeSelect";
-import Search from "@/components/HeaderSearch";
-import { DeviceType } from "@/store/modules/app";
+<script lang="ts">
+import { defineComponent, computed } from "vue";
+import { useStore } from "vuex";
+import Breadcrumb from "@/components/Breadcrumb/index.vue";
+import Hamburger from "@/components/Hamburger/index.vue";
+import ErrorLog from "@/components/ErrorLog/index.vue";
+import Screenfull from "@/components/Screenfull/index.vue";
+import SizeSelect from "@/components/SizeSelect/index.vue";
+import Search from "@/components/HeaderSearch/index.vue";
+import { DeviceType, AppTypes } from "@/store/modules/app/AppTypes";
+import { useRoute, useRouter } from "vue-router";
 
-export default {
+export default defineComponent({
   components: {
     Breadcrumb,
     Hamburger,
@@ -67,24 +69,37 @@ export default {
     SizeSelect,
     Search
   },
-  data() {
+  setup() {
+    const store = useStore();
+    const router = useRouter();
+    const route = useRoute();
+    const sidebar = computed(() => {
+      return store.state.app.sidebar;
+    });
+    const device = computed<DeviceType>(() => {
+      return store.state.app.device;
+    });
+    const avatar = computed<string>(() => {
+      return store.state.user.avatar;
+    });
+
+    const toggleSideBar = () => {
+      store.dispatch(AppTypes.APP_TOGGLE_SIDEBAR);
+    };
+    const logout = async () => {
+      await store.dispatch("user/logout");
+      await router.push(`/login?redirect=${route.fullPath}`);
+    };
     return {
+      sidebar,
+      device,
+      avatar,
+      toggleSideBar,
+      logout,
       DeviceType
     };
-  },
-  computed: {
-    ...mapGetters(["sidebar", "device", "avatar"])
-  },
-  methods: {
-    toggleSideBar() {
-      this.$store.dispatch("app/toggleSideBar");
-    },
-    async logout() {
-      await this.$store.dispatch("user/logout");
-      await this.$router.push(`/login?redirect=${this.$route.fullPath}`);
-    }
   }
-};
+});
 </script>
 
 <style lang="scss">

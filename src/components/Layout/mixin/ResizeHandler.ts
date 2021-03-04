@@ -1,7 +1,7 @@
-import { DeviceType } from "@/store/modules/app";
 import { watch, computed } from "vue";
 import { useStore } from "vuex";
 import { useRoute } from "vue-router";
+import { AppTypes, DeviceType } from "@/store/modules/app/AppTypes";
 
 const { body } = document;
 const WIDTH = 992; // refer to Bootstrap's responsive design
@@ -27,12 +27,12 @@ export default function() {
     if (!document.hidden) {
       const isMobileStr = isMobile();
       store.dispatch(
-        "app/toggleDevice",
+        AppTypes.APP_TOGGLE_DEVICE,
         isMobileStr ? DeviceType.Mobile : DeviceType.Desktop
       );
 
       if (isMobileStr) {
-        store.dispatch("app/closeSideBar", { withoutAnimation: true });
+        store.dispatch(AppTypes.APP_CLOSE_SIDEBAR, { withoutAnimation: true });
       }
     }
   };
@@ -49,15 +49,15 @@ export default function() {
     () => route.name,
     () => {
       if (device.value === DeviceType.Mobile && sidebar.value.opened) {
-        store.dispatch("app/closeSideBar", { withoutAnimation: false });
+        store.dispatch(AppTypes.APP_CLOSE_SIDEBAR, { withoutAnimation: false });
       }
     }
   );
 
   const resizeMounted = () => {
     if (isMobile()) {
-      store.dispatch("app/toggleDevice", DeviceType.Mobile);
-      store.dispatch("app/closeSideBar", { withoutAnimation: true });
+      store.dispatch(AppTypes.APP_TOGGLE_DEVICE, DeviceType.Mobile);
+      store.dispatch(AppTypes.APP_CLOSE_SIDEBAR, { withoutAnimation: true });
     }
   };
 
