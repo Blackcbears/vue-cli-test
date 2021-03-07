@@ -1,6 +1,6 @@
 /**
  * @author CuiJIng
- * @description 权限配置
+ * @description 路由权限配置
  * @date 2021-02-02 9:57
  */
 import NProgress from "nprogress"; // progress bar
@@ -35,7 +35,8 @@ router.beforeEach(
       if (to.path === "/login") {
         // if is logged in, redirect to the home page
         next({ path: "/" });
-        NProgress.done(); // hack: https://github.com/PanJiaChen/vue-element-admin/pull/2939
+        // hack: https://github.com/PanJiaChen/vue-element-admin/pull/2939
+        NProgress.done();
       } else {
         // determine whether the user has obtained his permission roles through getInfo
         if (store.state.user.roles.length === 0) {
