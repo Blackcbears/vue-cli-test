@@ -3,11 +3,12 @@ import modules from "./modules";
 import getters from "./getters";
 
 const store = createStore({
-  modules,
-  getters
+    modules,
+    getters
 });
 
 export function useStore() {
-  return store;
+    return store;
 }
+
 export default store;

@@ -8,28 +8,28 @@
 import { useStore } from "vuex";
 import { Directive, DirectiveBinding } from "vue";
 
-function checkPermission(el: any, binding: DirectiveBinding<any>) {
-  const { value } = binding;
-  const roles = useStore().getters && useStore().getters.roles;
+function checkPermission(el: any, binding: DirectiveBinding) {
+    const { value } = binding;
+    const roles = useStore().getters && useStore().getters.roles;
 
-  if (value && value instanceof Array) {
-    if (value.length > 0) {
-      const permissionRoles = value;
+    if (value && value instanceof Array) {
+        if (value.length > 0) {
+            const permissionRoles = value;
 
-      const hasPermission = roles.some((role: any) => {
-        return permissionRoles.includes(role);
-      });
+            const hasPermission = roles.some((role: any) => {
+                return permissionRoles.includes(role);
+            });
 
-      if (!hasPermission) {
-        el.parentNode && el.parentNode.removeChild(el);
-      }
+            if (!hasPermission) {
+                el.parentNode && el.parentNode.removeChild(el);
+            }
+        }
+    } else {
+        throw new Error(`need roles! Like v-permission="['admin','editor']"`);
     }
-  } else {
-    throw new Error(`need roles! Like v-permission="['admin','editor']"`);
-  }
 }
 export const permission: Directive = {
-  mounted(el, binding) {
-    checkPermission(el, binding);
-  }
+    mounted(el, binding) {
+        checkPermission(el, binding);
+    }
 };

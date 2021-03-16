@@ -1,24 +1,27 @@
 <template>
-  <div>
-    <el-dropdown trigger="click" @command="handleSetSize">
-      <div>
-        <svg-icon class-name="size-icon" icon-class="el-iconfont-size" />
-      </div>
-      <template #dropdown>
-        <el-dropdown-menu>
-          <el-dropdown-item
-            v-for="item of sizeOptions"
-            :key="item.value"
-            :disabled="size === item.value"
-            :command="item.value"
-          >
-            {{ item.label }}
-          </el-dropdown-item>
-        </el-dropdown-menu>
-      </template>
-    </el-dropdown>
-    <div />
-  </div>
+    <div>
+        <el-dropdown trigger="click" @command="handleSetSize">
+            <div>
+                <svg-icon
+                    class-name="size-icon"
+                    icon-class="el-iconfont-size"
+                />
+            </div>
+            <template #dropdown>
+                <el-dropdown-menu>
+                    <el-dropdown-item
+                        v-for="item of sizeOptions"
+                        :key="item.value"
+                        :disabled="size === item.value"
+                        :command="item.value"
+                    >
+                        {{ item.label }}
+                    </el-dropdown-item>
+                </el-dropdown-menu>
+            </template>
+        </el-dropdown>
+        <div />
+    </div>
 </template>
 
 <script>
@@ -26,46 +29,46 @@ import SvgIcon from "@/components/SvgIcon";
 import { AppTypes } from "@/store/modules/app/AppTypes";
 
 export default {
-  data() {
-    return {
-      sizeOptions: [
-        { label: "Default", value: "default" },
-        { label: "Medium", value: "medium" },
-        { label: "Small", value: "small" },
-        { label: "Mini", value: "mini" }
-      ]
-    };
-  },
-  components: {
-    SvgIcon
-  },
-  computed: {
-    size() {
-      return this.$store.getters.size;
-    }
-  },
-  methods: {
-    handleSetSize(size) {
-      this.$ELEMENT.size = size;
-      this.$store.dispatch(AppTypes.APP_SET_SIZE, size);
-      this.refreshView();
-      this.$message({
-        message: "Switch Size Success",
-        type: "success"
-      });
+    data() {
+        return {
+            sizeOptions: [
+                { label: "Default", value: "default" },
+                { label: "Medium", value: "medium" },
+                { label: "Small", value: "small" },
+                { label: "Mini", value: "mini" }
+            ]
+        };
     },
-    refreshView() {
-      // In order to make the cached page re-rendered
-      this.$store.dispatch("tagsView/delAllCachedViews", this.$route);
+    components: {
+        SvgIcon
+    },
+    computed: {
+        size() {
+            return this.$store.getters.size;
+        }
+    },
+    methods: {
+        handleSetSize(size) {
+            this.$ELEMENT.size = size;
+            this.$store.dispatch(AppTypes.APP_SET_SIZE, size);
+            this.refreshView();
+            this.$message({
+                message: "Switch Size Success",
+                type: "success"
+            });
+        },
+        refreshView() {
+            // In order to make the cached page re-rendered
+            this.$store.dispatch("tagsView/delAllCachedViews", this.$route);
 
-      const { fullPath } = this.$route;
+            const { fullPath } = this.$route;
 
-      this.$nextTick(() => {
-        this.$router.replace({
-          path: "/redirect" + fullPath
-        });
-      });
+            this.$nextTick(() => {
+                this.$router.replace({
+                    path: "/redirect" + fullPath
+                });
+            });
+        }
     }
-  }
 };
 </script>

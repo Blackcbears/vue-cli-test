@@ -5,15 +5,15 @@ import { LOGOUT, LOGIN, USERINFO } from "./api";
  * @param data
  */
 export interface LoginData {
-  username: string;
-  password: string;
+    username: string;
+    password: string;
 }
 export function login(data: LoginData) {
-  return request({
-    url: LOGIN,
-    method: "post",
-    data
-  });
+    return request({
+        url: LOGIN,
+        method: "post",
+        data
+    });
 }
 
 /**
@@ -21,11 +21,11 @@ export function login(data: LoginData) {
  * @param token token信息
  */
 export function getInfo(token: string) {
-  return request({
-    url: USERINFO,
-    method: "get",
-    params: { token }
-  });
+    return request({
+        url: USERINFO,
+        method: "get",
+        params: { token }
+    });
 }
 
 /**
@@ -33,9 +33,9 @@ export function getInfo(token: string) {
  * @param token token信息
  */
 export function logout(token: string) {
-  return request({
-    url: LOGOUT,
-    method: "post",
-    params: { token }
-  });
+    return request({
+        url: LOGOUT,
+        method: "post",
+        params: { token }
+    });
 }
